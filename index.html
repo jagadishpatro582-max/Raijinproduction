@@ -1079,9 +1079,120 @@
         }
 
         #scrollTopBtn:hover svg { transform: translateY(-2px); }
+        /* Themed preloader: rotating gradient ring + pulsing dots */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #fff 0%, #fbf8ff 100%);
+            z-index: 20000;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .loader-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 28px;
+            border-radius: 14px;
+            backdrop-filter: blur(6px) saturate(120%);
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 12px 40px rgba(97,48,120,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        /* 3D rotating stacked cubes */
+        .loader-3d {
+            width: 140px;
+            height: 110px;
+            perspective: 900px;
+            display: grid;
+            place-items: center;
+        }
+
+        .stack {
+            width: 76px;
+            height: 76px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .box {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            left: 10px;
+            top: 10px;
+            border-radius: 8px;
+            background: linear-gradient(135deg,#613078 0%,#b86bbd 100%);
+            box-shadow: 0 18px 40px rgba(97,48,120,0.14), 0 2px 6px rgba(0,0,0,0.06) inset;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            animation: box-rotate 1.9s cubic-bezier(.2,.9,.2,1) infinite;
+        }
+
+        .box:nth-child(1) { transform: translateZ(12px) rotateX(18deg) rotateY(12deg); animation-delay: 0s; }
+        .box:nth-child(2) { transform: translateZ(0px) rotateX(18deg) rotateY(12deg) scale(0.94); animation-delay: 0.12s; filter: brightness(.98); }
+        .box:nth-child(3) { transform: translateZ(-12px) rotateX(18deg) rotateY(12deg) scale(0.88); animation-delay: 0.24s; filter: brightness(.96); }
+
+        .box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.04));
+            mix-blend-mode: overlay;
+        }
+
+        @keyframes box-rotate {
+            0% { transform: rotateX(18deg) rotateY(12deg) translateZ(var(--z,0)); }
+            50% { transform: rotateX(18deg) rotateY(192deg) translateZ(var(--z,0)); }
+            100% { transform: rotateX(18deg) rotateY(372deg) translateZ(var(--z,0)); }
+        }
+
+        .preloader-title {
+            font-size: 15px;
+            color: #2f2d3b;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .preloader-sub {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .preloader-title {
+            font-size: 14px;
+            color: #3f3d56;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .preloader-sub {
+            font-size: 12px;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body>
+    <!-- Preloader (single bar, defers media until after stats animate) -->
+    <div id="preloader" role="status" aria-label="Loading website">
+        <div class="loader-wrap">
+                <div class="loader-3d" aria-hidden="true">
+                    <div class="stack" aria-hidden="true">
+                        <div class="box"></div>
+                        <div class="box"></div>
+                        <div class="box"></div>
+                    </div>
+                </div>
+            <div class="preloader-title">Preparing portfolio</div>
+            <div class="preloader-sub">Just a moment — loading animations</div>
+        </div>
+    </div>
+
     <!-- Background -->
     <div class="background">
         <div class="grid-overlay"></div>
@@ -1466,7 +1577,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
                 <div class="service-card">
                     <div class="service-content">
-                        <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img data-src="assets/project1.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project One</h3>
                         <p class="service-description">High-impact video production for a leading brand.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1474,7 +1585,7 @@
                 </div>
                 <div class="service-card">
                     <div class="service-content">
-                        <img src="assets/project2.jpg" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img data-src="assets/project2.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project Two</h3>
                         <p class="service-description">Social media campaign with measurable growth results.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1482,7 +1593,7 @@
                 </div>
                 <div class="service-card">
                     <div class="service-content">
-                        <img src="assets/project3.jpg" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img data-src="assets/project3.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project Three</h3>
                         <p class="service-description">Brand advertising and creative storytelling.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1504,17 +1615,17 @@
             </div>
             <div class="portfolio-slider" style="display: flex; overflow-x: auto; gap: 2rem; padding-bottom: 1rem; scrollbar-width: thin;">
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img data-src="assets/project1.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project One</h3>
                     <p class="service-description">High-impact video production for a leading brand.</p>
                 </div>
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img src="assets/project2.jpg" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img data-src="assets/project2.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Two</h3>
                     <p class="service-description">Social media campaign with measurable growth results.</p>
                 </div>
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img src="assets/project3.jpg" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img data-src="assets/project3.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Three</h3>
                     <p class="service-description">Brand advertising and creative storytelling.</p>
                 </div>
@@ -1721,15 +1832,83 @@
             });
         });
 
-        // Add simple loading fade-in
+        // Preloader: ring + dots UI — animate stats, hold, then load deferred media and reveal
         window.addEventListener('load', () => {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease';
+            const preloader = document.getElementById('preloader');
+            const titleEl = document.querySelector('.preloader-title');
+            const subEl = document.querySelector('.preloader-sub');
 
-            // ensure a paint occurs then fade in
-            setTimeout(() => {
+            // fallback: simple fade-in if preloader missing
+            if (!preloader) {
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.4s ease';
+                setTimeout(() => document.body.style.opacity = '1', 50);
+                return;
+            }
+
+            // block scrolling while preloader is active
+            const html = document.documentElement;
+            const prevHtmlOverflow = html.style.overflow || '';
+            const prevBodyOverflow = document.body.style.overflow || '';
+            html.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+
+            // hide content until reveal
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.36s ease';
+
+            // animate stat numbers during preloader
+            const statVals = document.querySelectorAll('.stat-value[data-target]');
+            statVals.forEach(v => {
+                if (v.dataset.animated) return;
+                v.dataset.animated = 'true';
+                animateValue(v, 1200);
+            });
+
+            // keep the preloader visible for a pleasant minimum duration (slightly longer for 3D effect)
+            const minVisible = 2400; // ms
+            const maxWait = 7000; // ms for media
+
+            function startDeferredLoad() {
+                const imgs = Array.from(document.querySelectorAll('img[data-src]'));
+                if (imgs.length === 0) return finish();
+
+                let remaining = imgs.length;
+                const startTime = performance.now();
+
+                const timeoutId = setTimeout(() => {
+                    // if images take too long, reveal anyway
+                    finish();
+                }, maxWait);
+
+                imgs.forEach(img => {
+                    const done = () => {
+                        remaining -= 1;
+                        if (subEl) subEl.textContent = `Loading media… (${imgs.length - remaining}/${imgs.length})`;
+                        if (remaining <= 0) {
+                            clearTimeout(timeoutId);
+                            finish();
+                        }
+                    };
+                    img.addEventListener('load', done, { once: true });
+                    img.addEventListener('error', done, { once: true });
+                    // start loading
+                    img.src = img.dataset.src;
+                });
+            }
+
+            function finish() {
+                preloader.style.transition = 'opacity 0.42s ease, transform 0.52s ease';
+                preloader.style.opacity = '0';
+                preloader.style.transform = 'translateY(-8px)';
                 document.body.style.opacity = '1';
-            }, 50);
+                // restore scrolling
+                html.style.overflow = prevHtmlOverflow;
+                document.body.style.overflow = prevBodyOverflow;
+                setTimeout(() => preloader.remove(), 620);
+            }
+
+            setTimeout(startDeferredLoad, minVisible);
         });
 
         // Scroll-to-top button behavior
