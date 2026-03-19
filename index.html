@@ -1079,117 +1079,177 @@
         }
 
         #scrollTopBtn:hover svg { transform: translateY(-2px); }
-        /* Themed preloader: rotating gradient ring + pulsing dots */
+        /* Premium 3D Bar-Style Preloader */
         #preloader {
             position: fixed;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(180deg, #fff 0%, #fbf8ff 100%);
+            background: radial-gradient(1200px 600px at 20% 20%, rgba(8,4,12,0.92), transparent 10%),
+                        linear-gradient(180deg, #020107 0%, #0b0320 45%, #180733 100%);
             z-index: 20000;
-            -webkit-font-smoothing: antialiased;
+            transition: opacity 0.8s ease, transform 0.6s ease;
+            will-change: opacity, transform;
         }
 
-        .loader-wrap {
+        /* blur-to-clear: while loader active, blur the rest of the page */
+        body.preloader-active > *:not(#preloader) {
+            filter: blur(10px) saturate(110%);
+            transform: translateZ(0);
+            transition: filter 0.8s ease, opacity 0.6s ease;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .preloader-wrap {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px;
-            padding: 18px 28px;
-            border-radius: 14px;
-            backdrop-filter: blur(6px) saturate(120%);
-            background: rgba(255,255,255,0.6);
-            box-shadow: 0 12px 40px rgba(97,48,120,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+            gap: 18px;
+            padding: 28px 18px;
+            max-width: 820px;
+            width: 100%;
         }
 
-        /* 3D rotating stacked cubes */
-        .loader-3d {
-            width: 140px;
-            height: 110px;
+        .bars {
+            display: flex;
+            gap: 12px;
+            align-items: end;
             perspective: 900px;
-            display: grid;
-            place-items: center;
-        }
-
-        .stack {
-            width: 76px;
-            height: 76px;
-            position: relative;
             transform-style: preserve-3d;
+            will-change: transform;
         }
 
-        .box {
-            position: absolute;
-            width: 56px;
-            height: 56px;
-            left: 10px;
-            top: 10px;
+        .bar {
+            width: 18px;
+            height: 140px;
             border-radius: 8px;
-            background: linear-gradient(135deg,#613078 0%,#b86bbd 100%);
-            box-shadow: 0 18px 40px rgba(97,48,120,0.14), 0 2px 6px rgba(0,0,0,0.06) inset;
-            transform-origin: center center;
-            backface-visibility: hidden;
-            animation: box-rotate 1.9s cubic-bezier(.2,.9,.2,1) infinite;
+            position: relative;
+            transform-origin: bottom center;
+            background: linear-gradient(180deg, rgba(60,161,255,0.12), rgba(124,58,237,0.12));
+            box-shadow: 0 10px 30px rgba(2,2,6,0.7), inset 0 -10px 26px rgba(0,0,0,0.6);
+            overflow: visible;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
         }
 
-        .box:nth-child(1) { transform: translateZ(12px) rotateX(18deg) rotateY(12deg); animation-delay: 0s; }
-        .box:nth-child(2) { transform: translateZ(0px) rotateX(18deg) rotateY(12deg) scale(0.94); animation-delay: 0.12s; filter: brightness(.98); }
-        .box:nth-child(3) { transform: translateZ(-12px) rotateX(18deg) rotateY(12deg) scale(0.88); animation-delay: 0.24s; filter: brightness(.96); }
+        /* inner face that scales for the equalizer motion */
+        .bar .face {
+            width: 90%;
+            height: 40%;
+            border-radius: 6px 6px 2px 2px;
+            background: linear-gradient(180deg, #8a4de0, #3db7ff);
+            box-shadow: 0 6px 18px rgba(124,58,237,0.35), 0 0 24px rgba(60,161,255,0.18);
+            transform-origin: bottom center;
+            will-change: transform, box-shadow;
+        }
 
-        .box::after {
+        /* highlight edge */
+        .bar::before {
             content: '';
             position: absolute;
-            inset: 0;
-            border-radius: 8px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.04));
-            mix-blend-mode: overlay;
+            left: 4px;
+            top: 8px;
+            bottom: 8px;
+            width: 6px;
+            border-radius: 6px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+            mix-blend-mode: screen;
+            pointer-events: none;
         }
 
-        @keyframes box-rotate {
-            0% { transform: rotateX(18deg) rotateY(12deg) translateZ(var(--z,0)); }
-            50% { transform: rotateX(18deg) rotateY(192deg) translateZ(var(--z,0)); }
-            100% { transform: rotateX(18deg) rotateY(372deg) translateZ(var(--z,0)); }
+        /* subtle glow overlay */
+        .bar::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 12px;
+            filter: blur(12px);
+            background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.14), transparent 30%),
+                        radial-gradient(circle at 70% 70%, rgba(60,161,255,0.08), transparent 25%);
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .preloader-title {
+        /* equalizer motion */
+        @keyframes bar-wave {
+            0% { transform: scaleY(0.28) translateY(44%); }
+            40% { transform: scaleY(1.0) translateY(0%); }
+            100% { transform: scaleY(0.32) translateY(42%); }
+        }
+
+        .bar .face { animation: bar-wave 1.25s ease-in-out infinite; }
+
+        /* stagger delays for a flowing wave */
+        .bar:nth-child(1) .face { animation-delay: -0.08s; }
+        .bar:nth-child(2) .face { animation-delay: -0.2s; }
+        .bar:nth-child(3) .face { animation-delay: -0.36s; }
+        .bar:nth-child(4) .face { animation-delay: -0.5s; }
+        .bar:nth-child(5) .face { animation-delay: -0.64s; }
+        .bar:nth-child(6) .face { animation-delay: -0.78s; }
+        .bar:nth-child(7) .face { animation-delay: -0.9s; }
+        .bar:nth-child(8) .face { animation-delay: -1.02s; }
+
+        /* reflection below bars */
+        .reflection {
+            width: 100%;
+            height: 36px;
+            margin-top: 8px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.0));
+            transform: translateY(-6px) scaleY(-1);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0));
+            opacity: 0.45;
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        .loader-text {
+            color: #e6e9ff;
+            font-weight: 700;
+            letter-spacing: 0.02em;
             font-size: 15px;
-            color: #2f2d3b;
-            font-weight: 700;
-            letter-spacing: 0.02em;
+            text-align: center;
+            text-shadow: 0 6px 20px rgba(20,6,60,0.6), 0 0 10px rgba(60,161,255,0.06);
+            white-space: nowrap;
         }
 
-        .preloader-sub {
-            font-size: 12px;
-            color: #6b7280;
+        .loader-sub {
+            color: #bfc6e8;
+            opacity: 0.9;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
-        .preloader-title {
-            font-size: 14px;
-            color: #3f3d56;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
+        /* fade-out state */
+        #preloader.fade-out { opacity: 0; transform: scale(0.98); pointer-events: none; }
 
-        .preloader-sub {
-            font-size: 12px;
-            color: #6b7280;
+        /* responsive */
+        @media (max-width: 768px) {
+            .bar { height: 96px; width: 14px; }
+            .bar .face { height: 36%; }
+            .bars { gap: 8px; }
         }
     </style>
 </head>
 <body>
-    <!-- Preloader (single bar, defers media until after stats animate) -->
-    <div id="preloader" role="status" aria-label="Loading website">
-        <div class="loader-wrap">
-                <div class="loader-3d" aria-hidden="true">
-                    <div class="stack" aria-hidden="true">
-                        <div class="box"></div>
-                        <div class="box"></div>
-                        <div class="box"></div>
-                    </div>
-                </div>
-            <div class="preloader-title">Preparing portfolio</div>
-            <div class="preloader-sub">Just a moment — loading animations</div>
+    <!-- Premium 3D Bar-Style Preloader -->
+    <div id="preloader" role="status" aria-label="Loading Raijin Production">
+        <div class="preloader-wrap">
+            <div class="bars" aria-hidden="true">
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+                <div class="bar"><div class="face"></div></div>
+            </div>
+            <div class="reflection" aria-hidden="true"></div>
+            <div class="loader-text" id="loader-text">Loading Raijin Production...</div>
+            <div class="loader-sub" id="loader-sub">Powering Your Brand...</div>
         </div>
     </div>
 
@@ -1577,7 +1637,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
                 <div class="service-card">
                     <div class="service-content">
-                        <img data-src="assets/project1.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project One</h3>
                         <p class="service-description">High-impact video production for a leading brand.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1585,7 +1645,7 @@
                 </div>
                 <div class="service-card">
                     <div class="service-content">
-                        <img data-src="assets/project2.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img src="assets/project2.jpg" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project Two</h3>
                         <p class="service-description">Social media campaign with measurable growth results.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1593,7 +1653,7 @@
                 </div>
                 <div class="service-card">
                     <div class="service-content">
-                        <img data-src="assets/project3.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                        <img src="assets/project3.jpg" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                         <h3 class="service-title">Project Three</h3>
                         <p class="service-description">Brand advertising and creative storytelling.</p>
                         <div class="service-link">View Details <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
@@ -1615,17 +1675,17 @@
             </div>
             <div class="portfolio-slider" style="display: flex; overflow-x: auto; gap: 2rem; padding-bottom: 1rem; scrollbar-width: thin;">
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img data-src="assets/project1.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project One</h3>
                     <p class="service-description">High-impact video production for a leading brand.</p>
                 </div>
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img data-src="assets/project2.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img src="assets/project2.jpg" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Two</h3>
                     <p class="service-description">Social media campaign with measurable growth results.</p>
                 </div>
                 <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
-                    <img data-src="assets/project3.jpg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
+                    <img src="assets/project3.jpg" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Three</h3>
                     <p class="service-description">Brand advertising and creative storytelling.</p>
                 </div>
@@ -1832,84 +1892,64 @@
             });
         });
 
-        // Preloader: ring + dots UI — animate stats, hold, then load deferred media and reveal
-        window.addEventListener('load', () => {
+        // Premium bar preloader initialization
+        (function() {
             const preloader = document.getElementById('preloader');
-            const titleEl = document.querySelector('.preloader-title');
-            const subEl = document.querySelector('.preloader-sub');
+            const loaderText = document.getElementById('loader-text');
 
-            // fallback: simple fade-in if preloader missing
-            if (!preloader) {
-                document.body.style.opacity = '0';
-                document.body.style.transition = 'opacity 0.4s ease';
-                setTimeout(() => document.body.style.opacity = '1', 50);
-                return;
-            }
+            if (!preloader) return;
 
-            // block scrolling while preloader is active
-            const html = document.documentElement;
-            const prevHtmlOverflow = html.style.overflow || '';
-            const prevBodyOverflow = document.body.style.overflow || '';
-            html.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
+            // mark page as preloader-active so CSS can blur content
+            document.body.classList.add('preloader-active');
+            document.documentElement.style.overflow = 'hidden';
 
-            // hide content until reveal
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.36s ease';
-
-            // animate stat numbers during preloader
-            const statVals = document.querySelectorAll('.stat-value[data-target]');
-            statVals.forEach(v => {
-                if (v.dataset.animated) return;
-                v.dataset.animated = 'true';
-                animateValue(v, 1200);
-            });
-
-            // keep the preloader visible for a pleasant minimum duration (slightly longer for 3D effect)
-            const minVisible = 2400; // ms
-            const maxWait = 7000; // ms for media
-
-            function startDeferredLoad() {
-                const imgs = Array.from(document.querySelectorAll('img[data-src]'));
-                if (imgs.length === 0) return finish();
-
-                let remaining = imgs.length;
-                const startTime = performance.now();
-
-                const timeoutId = setTimeout(() => {
-                    // if images take too long, reveal anyway
-                    finish();
-                }, maxWait);
-
-                imgs.forEach(img => {
-                    const done = () => {
-                        remaining -= 1;
-                        if (subEl) subEl.textContent = `Loading media… (${imgs.length - remaining}/${imgs.length})`;
-                        if (remaining <= 0) {
-                            clearTimeout(timeoutId);
-                            finish();
+            // typing effect for loader text (pure JS, lightweight)
+            function typeText(el, str, speed = 40) {
+                if (!el) return Promise.resolve();
+                el.textContent = '';
+                return new Promise(resolve => {
+                    let i = 0;
+                    const t = setInterval(() => {
+                        el.textContent += str.charAt(i);
+                        i++;
+                        if (i >= str.length) {
+                            clearInterval(t);
+                            resolve();
                         }
-                    };
-                    img.addEventListener('load', done, { once: true });
-                    img.addEventListener('error', done, { once: true });
-                    // start loading
-                    img.src = img.dataset.src;
+                    }, speed);
                 });
             }
 
-            function finish() {
-                preloader.style.transition = 'opacity 0.42s ease, transform 0.52s ease';
-                preloader.style.opacity = '0';
-                preloader.style.transform = 'translateY(-8px)';
-                document.body.style.opacity = '1';
-                // restore scrolling
-                html.style.overflow = prevHtmlOverflow;
-                document.body.style.overflow = prevBodyOverflow;
-                setTimeout(() => preloader.remove(), 620);
+            // start typing (non-blocking)
+            const text = loaderText ? loaderText.textContent.trim() : 'Loading Raijin Production...';
+            if (loaderText) loaderText.textContent = '';
+            setTimeout(() => typeText(loaderText, text, 28), 120);
+
+            // finish sequence when window 'load' fires or after max wait
+            let finished = false;
+            const maxWait = 6000; // fallback in ms
+
+            function revealSite() {
+                if (finished) return;
+                finished = true;
+                preloader.classList.add('fade-out');
+                document.body.classList.remove('preloader-active');
+                document.documentElement.style.overflow = '';
+
+                // remove preloader from DOM after transition
+                setTimeout(() => {
+                    try { preloader.remove(); } catch (e) { preloader.style.display = 'none'; }
+                }, 900);
             }
 
-            setTimeout(startDeferredLoad, minVisible);
-        });
+            window.addEventListener('load', () => {
+                // small delay for premium feel
+                setTimeout(revealSite, 700);
+            });
+
+            // maximum wait fallback
+            setTimeout(revealSite, maxWait);
+        })();
 
         // Scroll-to-top button behavior
         (function() {
