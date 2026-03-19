@@ -889,6 +889,29 @@
             display: block;
         }
 
+        /* Additional Utility Classes for Responsive Layouts */
+        .content-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .content-grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        .portfolio-slide {
+            min-width: 320px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(97, 48, 120, 0.15);
+            padding: 2rem;
+            transition: box-shadow 0.3s;
+        }
+
         /* Responsive tweaks for mobile/tablet */
         @media (max-width: 1024px) {
             .navbar { width: calc(100% - 2rem); border-radius: 1.5rem; }
@@ -914,6 +937,22 @@
             .service-card { padding: 1rem; border-radius: 1.25rem; }
             .portfolio-slide { min-width: 280px; }
             .logo-img { height: 48px; padding-left: 0.5rem; }
+        }
+
+        /* Specific tweaks for small mobile screens (e.g. 420px) */
+        @media (max-width: 480px) {
+            .hero-title { font-size: 1.75rem; }
+            .hero-description { font-size: 0.95rem; }
+            .section-title { font-size: 1.75rem !important; }
+            .stat-value { font-size: 2.25rem; }
+            .mobile-nav-link { font-size: 1.25rem; }
+            .hero { padding-top: 5rem; min-height: 50vh; }
+            .stats-grid { margin-top: 2rem; }
+            .services { padding: 3rem 1rem; }
+            .next-page-section, .portfolio-section, .portfolio-slider-section { padding: 3rem 1rem !important; }
+            .portfolio-slide { min-width: 260px; padding: 1.5rem; }
+            .logo-img { max-width: 160px; height: 40px; }
+            .footer-content { padding: 2rem 1rem; text-align: center; }
         }
 
         .service-card:hover {
@@ -1487,7 +1526,7 @@
                     Discover our extended capabilities and creative solutions for your business. Dive deeper into our portfolio, case studies, and advanced services.
                 </p>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+            <div class="content-grid-3">
                 <div class="service-card">
                     <div class="service-content">
                         <div class="service-icon-wrapper">
@@ -1727,7 +1766,7 @@
                     A selection of our best creative works and projects.
                 </p>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+            <div class="content-grid-3">
                 <div class="service-card">
                     <div class="service-content">
                         <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
@@ -1767,17 +1806,17 @@
                 </p>
             </div>
             <div class="portfolio-slider" style="display: flex; overflow-x: auto; gap: 2rem; padding-bottom: 1rem; scrollbar-width: thin;">
-                <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
+                <div class="portfolio-slide">
                     <img src="assets/project1.jpg" alt="Project 1" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project One</h3>
                     <p class="service-description">High-impact video production for a leading brand.</p>
                 </div>
-                <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
+                <div class="portfolio-slide">
                     <img src="assets/project2.jpg" alt="Project 2" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Two</h3>
                     <p class="service-description">Social media campaign with measurable growth results.</p>
                 </div>
-                <div class="portfolio-slide" style="min-width: 320px; background: rgba(255,255,255,0.7); border-radius: 2rem; box-shadow: 0 8px 32px 0 rgba(97,48,120,0.15); padding: 2rem; transition: box-shadow 0.3s;">
+                <div class="portfolio-slide">
                     <img src="assets/project3.jpg" alt="Project 3" style="width:100%; height:180px; object-fit:cover; border-radius:1.5rem; margin-bottom:1rem; background:#e5e7eb;">
                     <h3 class="service-title">Project Three</h3>
                     <p class="service-description">Brand advertising and creative storytelling.</p>
