@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Social Media Audit - Raijin Production</title>
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/jagadishpatro582-max/Raijinproduction/0675f62cf70c274ff9cab6f931097f3f0a0cd197/Untitled-1%20copy.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: white;
+            color: #000;
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        ::selection {
+            background-color: rgba(97, 48, 120, 0.2);
+            color: #613078;
+        }
+
+        /* Background */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: white;
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+            background-size: 4rem 4rem;
+            background-attachment: fixed;
+            background-position: center center;
+            opacity: 0.9;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50%; height: 50%; background: rgba(97, 48, 120, 0.2); }
+        .blob-2 { top: 40%; right: -10%; width: 60%; height: 60%; background: rgba(139, 71, 168, 0.15); }
+
+        /* Container & Cards */
+        .container {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(97, 48, 120, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .card { padding: 4rem; }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 9999px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #613078;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(97, 48, 120, 0.05);
+        }
+
+        h1 { font-size: 2.25rem; font-weight: 900; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em; color: #000; }
+        @media (min-width: 768px) { h1 { font-size: 3rem; } }
+        
+        h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; margin-top: 1rem; color: #000; letter-spacing: -0.02em; }
+        p { color: #525252; margin-bottom: 1rem; font-size: 1.125rem; font-weight: 500; }
+
+        /* Grid items */
+        .contact-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 3rem; }
+        @media(min-width: 640px) { .contact-grid { grid-template-columns: 1fr 1fr; } }
+
+        .contact-item { padding: 1.5rem; background: rgba(255, 255, 255, 0.7); border-radius: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.9); transition: transform 0.3s; }
+        .contact-item:hover { transform: translateY(-4px); }
+        .contact-item h4 { color: #613078; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 700; }
+        .contact-item p { margin-bottom: 0; font-size: 1.125rem; color: #000; font-weight: 700; }
+        .contact-item span { display: block; font-size: 0.875rem; color: #737373; margin-top: 0.25rem; }
+
+        /* Steps */
+        .step { display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-start; }
+        .step-number { font-weight: 900; font-size: 1.5rem; color: #613078; background: rgba(97, 48, 120, 0.1); width: 48px; height: 48px; min-width: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-family: 'Courier New', monospace; }
+        .step-content p { margin-bottom: 0; color: #262626; }
+
+        /* Checklist */
+        .checklist { list-style: none; margin-top: 2rem; }
+        .checklist li { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.25rem; padding: 1.25rem; background: rgba(255, 255, 255, 0.6); border-radius: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.5); }
+        .check-icon { color: #fff; background: #613078; width: 24px; height: 24px; min-width: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; margin-top: 0.15rem; }
+        .checklist li p { margin-bottom: 0; font-size: 1.05rem; color: #262626; font-weight: 500; }
+
+        /* CTA */
+        .btn-cta { display: inline-flex; align-items: center; gap: 0.5rem; padding: 1.25rem 3rem; background: linear-gradient(to right, #613078, #8b47a8); color: white; font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; text-decoration: none; border-radius: 9999px; margin-top: 2rem; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 8px 24px rgba(97, 48, 120, 0.4); border: none; cursor: pointer; }
+        .btn-cta:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(97, 48, 120, 0.5); color: white; }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="grid-overlay"></div>
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="badge">📍 Digital Marketing Agency Near You — In Bhubaneswar</div>
+            <h1>Let's Have a Real Conversation About Growing Your Business</h1>
+            <p>No pressure, no sales pitch disguised as a "discovery call." Just an honest conversation about where you are, where you want to be, and whether we're the right fit. We'll even throw in a free social media audit to start.</p>
+            
+            <div class="contact-grid">
+                <div class="contact-item"><h4>Address</h4><p>Bhubaneswar, Odisha</p><span>Serving clients across India & globally</span></div>
+                <div class="contact-item"><h4>Email Us</h4><p>hello@nexusgrow.in</p><span>We reply within 4 business hours</span></div>
+                <div class="contact-item"><h4>Call / WhatsApp</h4><p>+91 98765 43210</p><span>Mon–Sat, 9am – 7pm IST</span></div>
+                <div class="contact-item"><h4>Free Offer</h4><p>Social Media Audit</p><span>Complimentary for new enquiries this month</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>What happens when you reach out?</h2>
+            <p style="margin-bottom: 2.5rem;">We won't add you to a drip email sequence. We won't ghost you with a proposal and then follow up 12 times. Here's actually what happens:</p>
+            
+            <div class="step"><div class="step-number">01</div><div class="step-content"><p><strong>You send us a quick message</strong> with your business name, what you do, and what's not working right now.</p></div></div>
+            <div class="step"><div class="step-number">02</div><div class="step-content"><p><strong>We do a quick review</strong> of your current digital presence — website, social media, and search visibility — before we even speak to you.</p></div></div>
+            <div class="step"><div class="step-number">03</div><div class="step-content"><p><strong>We hop on a 30-minute call.</strong> We share what we found. We ask some questions. We listen.</p></div></div>
+            <div class="step"><div class="step-number">04</div><div class="step-content"><p><strong>If it feels right for both sides,</strong> we put together a proposal. If it doesn't — we'll tell you honestly and maybe even suggest who could help you better.</p></div></div>
+            
+            <p style="font-weight: 800; color: #613078; margin-top: 1.5rem; font-size: 1.25rem;">Simple, right? That's how it should be.</p>
+        </div>
+
+        <div class="card">
+            <h2>Free Social Media Audit Checklist</h2>
+            <p>Here's a preview of what we review when we audit your social media presence:</p>
+            
+            <ul class="checklist">
+                <li><div class="check-icon">✓</div><p>Profile completeness and consistency across all platforms</p></li>
+                <li><div class="check-icon">✓</div><p>Posting frequency and content mix (educational vs. promotional vs. engaging)</p></li>
+                <li><div class="check-icon">✓</div><p>Audience demographics — are you reaching the right people?</p></li>
+                <li><div class="check-icon">✓</div><p>Engagement rate analysis — likes don't pay bills, but trends tell the story</p></li>
+                <li><div class="check-icon">✓</div><p>Competitor benchmarking across your top 3 rivals</p></li>
+                <li><div class="check-icon">✓</div><p>Hashtag strategy effectiveness and reach</p></li>
+                <li><div class="check-icon">✓</div><p>Call-to-action clarity — are you actually asking people to do something?</p></li>
+                <li><div class="check-icon">✓</div><p>Link-in-bio and off-platform conversion flow</p></li>
+                <li><div class="check-icon">✓</div><p>Brand voice consistency — does it sound like a real human or a robot?</p></li>
+                <li><div class="check-icon">✓</div><p>Review of past 90 days' performance data</p></li>
+            </ul>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="mailto:hello@nexusgrow.in" class="btn-cta">Request Your Free Audit ↗</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
